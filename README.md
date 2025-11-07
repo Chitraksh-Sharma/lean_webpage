@@ -149,7 +149,7 @@ Lisa_web_page/
 
 1. Clone the repository:
 ```bash
-git clone [<repository-url>](https://github.com/chitraksha-stack/ask_lena_webpage.git)
+git clone https://github.com/Development-United/ask_lena_webpage.git
 cd Lisa_web_page
 ```
 
