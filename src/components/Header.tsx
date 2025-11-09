@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import VoiceAgentModal from "./VoiceAgentModal";
 
 const Header = () => {
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+
   return (
     <motion.header
       initial={{ y: -100 }}
@@ -58,7 +62,10 @@ const Header = () => {
 
           {/* Right Section */}
           <div className="flex items-center gap-4">
-            <Button className="bg-primary hover:bg-primary/90 shadow-sm">
+            <Button
+              onClick={() => setIsVoiceModalOpen(true)}
+              className="bg-primary hover:bg-primary/90 shadow-sm"
+            >
               Talk to Lena
             </Button>
 
@@ -69,6 +76,12 @@ const Header = () => {
           </div>
         </div>
       </nav>
+
+      {/* Voice Agent Modal */}
+      <VoiceAgentModal
+        isOpen={isVoiceModalOpen}
+        onClose={() => setIsVoiceModalOpen(false)}
+      />
     </motion.header>
   );
 };
