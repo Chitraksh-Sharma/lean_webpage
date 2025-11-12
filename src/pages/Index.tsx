@@ -1,6 +1,5 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import SocialProof from "@/components/SocialProof";
 import LenaShowcase from "@/components/LenaShowcase";
 import ConversationDemo from "@/components/ConversationDemo";
 import StatsSection from "@/components/StatsSection";
@@ -19,7 +18,6 @@ const Index = () => {
     <div className="min-h-screen bg-background relative overflow-x-hidden">
       <Header />
       <Hero />
-      <SocialProof />
       <UseCases />
   <AgentDemoSection />
       <IntegrationsSection />
