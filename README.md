@@ -2,6 +2,27 @@
 
 A modern, responsive landing page for Lena AI, a multilingual voice agent platform that automates customer calls, appointments, and support interactions across 40+ languages.
 
+## ✅ Production Ready - Voice Agent Integration
+
+This frontend is now **production-ready** with environment-based configuration for the voice agent token server.
+
+**What Changed:**
+1. ✅ **Environment Variables** - Token server URL configurable via `.env` files
+2. ✅ **Development Setup** - `.env.development` with `http://localhost:3000/get-token`
+3. ✅ **Production Template** - `.env.production` ready for your deployed server
+4. ✅ **Updated Component** - `VoiceAgentModal.tsx` uses `import.meta.env.VITE_TOKEN_SERVER_URL`
+
+**Quick Start:**
+```bash
+npm install
+npm run dev  # Automatically uses localhost:3000 token server
+```
+
+**Deploy to Production:**
+1. Update `.env.production` with your token server URL
+2. Run `npm run build`
+3. Deploy `dist/` folder to Vercel/Netlify/etc.
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -144,13 +165,14 @@ Lisa_web_page/
 
 - Node.js (v18 or higher)
 - npm or yarn package manager
+- Token server running (for voice agent functionality)
 
 ### Setup
 
 1. Clone the repository:
 ```bash
 git clone https://github.com/Development-United/ask_lena_webpage.git
-cd Lisa_web_page
+cd Lena_webpage
 ```
 
 2. Install dependencies:
@@ -158,12 +180,45 @@ cd Lisa_web_page
 npm install
 ```
 
-3. Start the development server:
+3. **Environment Configuration (✅ Already Done)**:
+
+   The environment files are already configured:
+   - `.env.development` - Uses `http://localhost:3000/get-token`
+   - `.env.production` - Template for your production URL
+   - `.env.example` - Documentation
+
+   **No action needed for development!** It will automatically use localhost:3000.
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
 The application will be available at `http://localhost:8080`
+
+### Running with Voice Agent (Full Stack)
+
+To test the complete voice agent functionality locally:
+
+**Terminal 1 - Token Server:**
+```bash
+cd ../lena_webpage_agent
+python token_server.py
+```
+
+**Terminal 2 - AI Agent:**
+```bash
+cd ../lena_webpage_agent
+python src/lena/agent.py start
+```
+
+**Terminal 3 - Frontend:**
+```bash
+cd Lena_webpage
+npm run dev
+```
+
+Now click "Talk to Lena" button and test the voice conversation!
 
 ## Development
 
@@ -196,29 +251,210 @@ The dev server runs on port 8080 and supports:
 
 ## Build & Deployment
 
-### Production Build
+### Prerequisites for Production
+
+Before deploying, ensure you have:
+1. ✅ Deployed your token server (Backend)
+2. ✅ Token server URL (e.g., `https://lena-token.railway.app`)
+
+### Production Deployment Steps
+
+#### Step 1: Configure Production Environment
+
+Update `.env.production` with your deployed token server URL:
+
+```env
+VITE_TOKEN_SERVER_URL=https://your-token-server-url.com/get-token
+```
+
+**Example:**
+```env
+VITE_TOKEN_SERVER_URL=https://lena-token.railway.app/get-token
+```
+
+#### Step 2: Build for Production
 
 ```bash
 npm run build
 ```
 
-This creates an optimized production build in the `dist/` directory.
-
-### Build Output
-
+This creates an optimized production build in the `dist/` directory with:
 - Minified and optimized JavaScript
 - CSS extracted and minified
 - Assets with content hash for cache busting
-- Source maps (in development mode)
+- Environment variables baked in
 
-### Deployment
+#### Step 3: Deploy to Hosting Platform
 
-The static build can be deployed to:
-- Vercel
-- Netlify
-- GitHub Pages
-- AWS S3 + CloudFront
-- Any static hosting service
+**Option A: Vercel (Recommended) ⭐**
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy to production
+vercel --prod
+```
+
+Vercel automatically:
+- Detects Vite configuration
+- Uses `.env.production` for build
+- Provides HTTPS and CDN
+- Offers automatic deployments from Git
+
+**Option B: Netlify**
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Deploy to production
+netlify deploy --prod --dir=dist
+```
+
+Configuration for Netlify (`netlify.toml`):
+```toml
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
+
+**Option C: Firebase Hosting**
+```bash
+# Install Firebase tools
+npm install -g firebase-tools
+
+# Login and initialize
+firebase login
+firebase init hosting
+
+# Deploy
+firebase deploy
+```
+
+**Option D: GitHub Pages**
+```bash
+# Add to package.json
+"homepage": "https://yourusername.github.io/lena-webpage"
+
+# Install gh-pages
+npm install --save-dev gh-pages
+
+# Add deploy script to package.json
+"deploy": "npm run build && gh-pages -d dist"
+
+# Deploy
+npm run deploy
+```
+
+**Option E: Traditional Web Server (Apache/Nginx)**
+
+Upload the `dist/` folder to your web server and configure:
+
+**Nginx Configuration:**
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    root /var/www/lena-webpage/dist;
+    index index.html;
+
+    # SPA routing - serve index.html for all routes
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+**Apache Configuration (.htaccess):**
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+### Testing the Full Stack Locally
+
+Before deploying, test the complete setup:
+
+**Terminal 1 - Token Server (Backend):**
+```bash
+cd lena_webpage_agent
+python token_server.py
+# Server starts on http://localhost:3000
+```
+
+**Terminal 2 - AI Agent (Backend):**
+```bash
+cd lena_webpage_agent
+python src/lena/agent.py start
+# Agent connects to LiveKit
+```
+
+**Terminal 3 - Frontend:**
+```bash
+cd Lena_webpage
+npm run dev
+# Frontend starts on http://localhost:8080
+```
+
+**Test the Integration:**
+1. Open `http://localhost:8080` in your browser
+2. Click **"Talk to Lena"** button
+3. Allow microphone permissions
+4. Verify connection to token server in logs
+5. Test voice conversation with Lena
+
+### Deployment Checklist
+
+**Before Deploying:**
+- [ ] Token server deployed and running
+- [ ] `.env.production` updated with token server URL
+- [ ] AI agent running and connected to LiveKit
+- [ ] Tested locally with all three components
+- [ ] Production build tested (`npm run build && npm run preview`)
+
+**After Deploying:**
+- [ ] Frontend accessible via HTTPS
+- [ ] "Talk to Lena" button connects successfully
+- [ ] Voice conversation works end-to-end
+- [ ] Check browser console for errors
+- [ ] Test on mobile devices
+- [ ] Monitor token server logs for requests
+
+### Environment-Specific Behavior
+
+| Environment | Token Server URL | Build Command | Auto-Reload |
+|------------|------------------|---------------|-------------|
+| Development | `http://localhost:3000/get-token` | `npm run dev` | ✅ Yes |
+| Production | Your deployed URL | `npm run build` | ❌ No |
+| Preview | Production settings | `npm run preview` | ❌ No |
+
+### Troubleshooting Deployment
+
+**Issue: "Connection Error" when clicking "Talk to Lena"**
+- ✅ Verify token server URL in `.env.production` is correct
+- ✅ Check token server is running and accessible
+- ✅ Ensure CORS is enabled on token server (it is by default)
+- ✅ Check browser console for specific error messages
+
+**Issue: Token server URL still shows localhost in production**
+- ✅ Rebuild the app: `npm run build`
+- ✅ Verify `.env.production` exists and has correct URL
+- ✅ Environment variables are baked at build time, not runtime
+
+**Issue: 404 errors on page refresh**
+- ✅ Configure your hosting platform for SPA routing (see examples above)
+- ✅ All routes should serve `index.html`
 
 ## Components
 
@@ -301,6 +537,53 @@ Built with shadcn/ui, includes:
 - And many more...
 
 ## Configuration
+
+### Environment Variables
+
+The application uses environment variables to configure the token server URL for different environments.
+
+#### Files Created (✅ Production Ready)
+
+1. **`.env.development`** - Automatically used in development
+   ```env
+   VITE_TOKEN_SERVER_URL=http://localhost:3000/get-token
+   ```
+
+2. **`.env.production`** - Used when building for production
+   ```env
+   VITE_TOKEN_SERVER_URL=https://your-domain.com/get-token
+   ```
+
+3. **`.env.example`** - Template for documentation
+   ```env
+   VITE_TOKEN_SERVER_URL=http://localhost:3000/get-token
+   ```
+
+#### How It Works
+
+The frontend automatically connects to the correct token server based on the environment:
+
+- **Development**: Uses `http://localhost:3000/get-token` (local token server)
+- **Production**: Uses the URL specified in `.env.production` (your deployed token server)
+
+**Code Implementation** (in `VoiceAgentModal.tsx`):
+```typescript
+tokenServerUrl: import.meta.env.VITE_TOKEN_SERVER_URL || "http://localhost:3000/get-token"
+```
+
+This automatically switches between development and production configurations without code changes.
+
+#### Voice Agent Integration
+
+The **"Talk to Lena"** button in the header connects to:
+- **Token Server**: Requests LiveKit access tokens
+- **LiveKit**: Establishes WebRTC connection
+- **AI Agent**: Real-time voice conversation with Gemini 2.0
+
+**Modified Files:**
+- ✅ `src/components/VoiceAgentModal.tsx` - Now uses environment variable for token server URL
+- ✅ `.env.development` - Local development configuration
+- ✅ `.env.production` - Production deployment configuration
 
 ### Tailwind CSS
 

@@ -31,7 +31,7 @@ const VoiceAgentModal = ({ isOpen, onClose }: VoiceAgentModalProps) => {
     disconnect,
     toggleMute,
   } = useLiveKit({
-    tokenServerUrl: "http://localhost:3000/get-token",
+    tokenServerUrl: import.meta.env.VITE_TOKEN_SERVER_URL || "http://localhost:3000/get-token",
     onError: (err) => {
       console.error("LiveKit error:", err);
       toast({
@@ -225,7 +225,7 @@ const VoiceAgentModal = ({ isOpen, onClose }: VoiceAgentModalProps) => {
                 </p>
                 <p className="text-xs text-destructive/80">{error.message}</p>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Make sure your token server is running on http://localhost:3000
+                  Make sure your token server is running at {import.meta.env.VITE_TOKEN_SERVER_URL || "http://localhost:3000/get-token"}
                 </p>
               </div>
             </motion.div>
