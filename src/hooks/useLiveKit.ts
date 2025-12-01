@@ -24,7 +24,7 @@ interface LiveKitState {
 }
 
 export const useLiveKit = ({
-  tokenServerUrl = "http://localhost:3000/get-token",
+  tokenServerUrl = "https://lena-token-server-555768374299.us-central1.run.app/get-token",
   onError,
   onConnected,
   onDisconnected,
